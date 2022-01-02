@@ -8,7 +8,7 @@ Now its time for you to launch your NFT collection - `Crypto Devs`.
 
 - There should only exist 20 Crypto Dev NFT's and each one of them should be unique.
 - User's should be able to mint only 1 NFT with one transaction.
-- Whitelisted users, should have have a 5 min access period before the actual sale where they are guranteed atmost 1 NFT.
+- Whitelisted users, should have have a 5 min presale period before the actual sale where they are guranteed 1 NFT per transaction.
 - There should be a website for your NFT Collection.
 
 Lets start building 🚀
@@ -53,42 +53,140 @@ Hardhat is an Ethereum development environment and framework designed for full s
   npm install @openzeppelin/contracts
   ```
 
-- Creating a new file inside the `contracts` directory called `CryptoDevs.sol`.
+- We will need to call the `Whitelist Contract` that you deployed for your previous level to check for addresses that were whitelisted and give them presale access. As we only need to call `mapping(address => bool) public whitelistedAddresses;` We can create an interface for `Whitelist contract` with a function only for this mapping, this way we would save `gas` as we would not need to inherit and deploy the entire `Whitelist Contract` but only a part of it.
+
+- Create a new file inside the `contracts` direactory and call it `IWhitelist.sol`
 
   ```go
-      //SPDX-License-Identifier: Unlicense
+  // SPDX-License-Identifier: MIT
   pragma solidity ^0.8.0;
 
+  interface IWhitelist {
+      function whitelistedAddresses(address) external view returns (bool);
+  }
+  ```
 
-  contract Whitelist {
+- Create a new file inside the `contracts` directory called `CryptoDevs.sol`.
 
-      // Max number of whitelisted addresses allowed
-      uint8 public maxWhitelistedAddresses;
+  ```go
+  // SPDX-License-Identifier: MIT
+  pragma solidity ^0.8.0;
 
-      // Create a mapping of whitelistedAddresses
-      // if an address is whitelisted, we would set it to true, it is false my default for all other addresses.
-      mapping(address => bool) public whitelistedAddresses;
+  import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+  import "@openzeppelin/contracts/access/Ownable.sol";
+  import "./IWhitelist.sol";
 
-      // numAddressesWhitelisted would be used to keep track of how many addresses have been whitelisted
-      uint8 public numAddressesWhitelisted;
-
-      constructor(uint8 _maxWhitelistedAddresses) {
-          maxWhitelistedAddresses =  _maxWhitelistedAddresses;
-      }
-
+  contract CryptoDevs is ERC721, Ownable {
       /**
-          addAddressToWhitelist - This function adds the address of the sender to the
-          whitelist
-       */
-      function addAddressToWhitelist() public {
-          // check if the numAddressesWhitelisted < maxWhitelistedAddresses, if not then throw an error.
-          require(numAddressesWhitelisted < maxWhitelistedAddresses, "More addresses cant be added, limit reached");
-          // Add the address which called the function to the whitelistedAddress array
-          whitelistedAddresses[msg.sender] = true;
-          // Increase the number of whitelisted addresses
-          numAddressesWhitelisted += 1;
-      }
+      * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
+      * token will be the concatenation of the `baseURI` and the `tokenId`.
+      */
+      string _baseTokenURI;
 
+    //  _price is the price of one Crypto Dev NFT
+    uint256 public _price = 0.01 ether;
+
+    // _paused is used to pause the contract in case of an emergency
+    bool public _paused;
+
+    // max number of CryptoDevs
+    uint256 public maxTokenIds = 20;
+
+    // total number of tokenIds minted
+    uint256 public tokenIds;
+
+    // Whitelist contract instance
+    IWhitelist whitelist;
+
+    // boolean to keep track of when presale started
+    bool presaleStarted;
+
+    // timestamp for even presale would end
+    uint256 presaleEnded;
+
+    modifier onlyWhenNotPaused {
+        require(!_paused, "Contract currently paused");
+        _;
+    }
+
+    /**
+     * @dev ERC721 constructor takes in a `name` and a `symbol` to the token collection.
+     * name in our case is `Crypto Devs` and symbol is `CD`.
+     * Constructor for Crypto Devs takes in the baseURI to set _baseTokenURI for the collection.
+     * It also initializes an instance of whitelist interface.
+     */
+    constructor (string memory baseURI, address whitelistContract) ERC721("Crypto Devs", "CD") {
+        _baseTokenURI = baseURI;
+        whitelist = IWhitelist(whitelistContract);
+    }
+
+    /**
+    * @dev startPresale starts a presale for the whitelisted addresses
+     */
+    function startPresale() public onlyOwner {
+        presaleStarted = true;
+        // Set presaleEnded time as current timestamp + 5 minutes
+        // Solidity has cool syntax for timestamps (seconds, minutes, hours, days, years)
+        presaleEnded = block.timestamp + 5 minutes;
+    }
+
+    /**
+     * @dev presaleMint allows an user to mint one NFT per transaction during the presale.
+     */
+    function presaleMint() public payable onlyWhenNotPaused {
+        require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
+        require(whitelist.whitelistedAddresses(msg.sender), "You are not whitelisted");
+        require(tokenIds < maxTokenIds, "Exceeded maximum Cypto Devs supply");
+        require(msg.value >= _price, "Ether sent is not correct");
+        tokenIds += 1;
+        //_safeMint is a safer version of the _mint function as it ensures that
+        // if the address being minted to is a contract, then it knows how to deal with ERC721 tokens
+        // If the address being minted to is not a contract, it works the same way as _mint
+        _safeMint(msg.sender, tokenIds);
+    }
+
+    /**
+    * @dev mint allows an user to mint 1 NFT per transaction after the presale has ended.
+    */
+    function mint() public payable onlyWhenNotPaused {
+        require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
+        require(tokenIds < maxTokenIds, "Exceed maximum Cypto Devs supply");
+        require(msg.value >= _price, "Ether sent is not correct");
+        tokenIds += 1;
+        _safeMint(msg.sender, tokenIds);
+    }
+
+    /**
+    * @dev _baseURI overides the Openzeppelin's ERC721 implementation which by default
+    * returned an empty string for the baseURI
+    */
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    /**
+    * @dev setPaused makes the contract paused or unpaused
+     */
+    function setPaused(bool val) public onlyOwner {
+        _paused = val;
+    }
+
+    /**
+    * @dev withdraw sends all the ether in the contract
+    * to the owner of the contract
+     */
+    function withdraw() public onlyOwner  {
+        address _owner = owner();
+        uint256 amount = address(this).balance;
+        (bool sent, ) =  _owner.call{value: amount}("");
+        require(sent, "Failed to send Ether");
+    }
+
+     // Function to receive Ether. msg.data must be empty
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
   }
   ```
 
@@ -98,37 +196,10 @@ Hardhat is an Ethereum development environment and framework designed for full s
    npx hardhat compile
 ```
 
-- Lets deploy the contract to `rinkeby` network.Create a new file named `deploy.js` under the `scripts` folder
+- Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
 
-- Now we would write some code to deploy the contract in `deploy.js` file.
-
-  ```js
-  const { ethers } = require("hardhat");
-
-  async function main() {
-    /*
-            A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
-            so whitelistContract here is a factory for instances of our Whitelist contract.
-        */
-    const whitelistContract = await ethers.getContractFactory("Whitelist");
-
-    // here we deploy the contract
-    const deployedWhitelistContract = await whitelistContract.deploy(10);
-
-    // print the address of the deployed contract
-    console.log(
-      "Whitelist Contract Address:",
-      deployedWhitelistContract.address
-    );
-  }
-
-  // Call the main function and catch if there is any error
-  main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error(error);
-      process.exit(1);
-    });
+  ```bash
+  npm install dotenv
   ```
 
 - Now create a `.env` file in the `hardhat-tutorial` folder and add the following lines, use the instructions in the comments to get your Alchemy API Key URL and RINKEBY Private Key. Make sure that the account from which you get your rinkeby private key is funded with Rinkeby Ether.
@@ -145,13 +216,49 @@ ALCHEMY_API_KEY_URL="add-the-alchemy-key-url-here"
 // Be aware of NEVER putting real Ether into testing accounts
 RINKEBY_PRIVATE_KEY="add-the-rinkeby-private-key-here"
 
+// Address of the Whitelist Contract that you deployed
+WHITELIST_CONTRACT_ADDRESS="address-of-the-whitelist-contract"
 ```
 
-- Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
-  ```bash
-  npm install dotenv
+- Lets deploy the contract to `rinkeby` network.Create a new file named `deploy.js` under the `scripts` folder
+
+- Now we would write some code to deploy the contract in `deploy.js` file.
+
+  ```js
+  const { ethers } = require("hardhat");
+  require("dotenv").config({ path: ".env" });
+
+  async function main() {
+    const whitelistContract = process.env.WHITELIST_CONTRACT_ADDRESS;
+    /*
+    A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
+    so cryptoDevsContract here is a factory for instances of our CryptoDevs contract.
+  */
+    const cryptoDevsContract = await ethers.getContractFactory("CryptoDevs");
+
+    // here we deploy the contract
+    const deployedCryptoDevsContract = await cryptoDevsContract.deploy(
+      "https://cryptodevs.vercel.app/api/metadata/",
+      whitelistContract
+    );
+
+    // print the address of the deployed contract
+    console.log(
+      "Crypto Devs Contract Address:",
+      deployedCryptoDevsContract.address
+    );
+  }
+
+  // Call the main function and catch if there is any error
+  main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
   ```
-- Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhar.config.js` file with the given below lines
+
+- Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhart.config.js` file with the given below lines
 
 ```js
 require("@nomiclabs/hardhat-waffle");
@@ -176,7 +283,7 @@ module.exports = {
   ```bash
       npx hardhat run scripts/deploy.js --network rinkeby
   ```
-- Save the Whitelist Contract Address that was printed on your terminal in your notepad, you would need it futher down in the tutorial.
+- Save the Crypto Devs Contract Address that was printed on your terminal in your notepad, you would need it futher down in the tutorial.
 
 ### Website
 
@@ -184,7 +291,7 @@ module.exports = {
 - First, You would need to create a new `next` app. Your folder structure should look something like
 
   ```
-     - Whitelist-Dapp
+     - Crypto-Devs-Dapp
          - hardhat-tutorial
          - next-app
   ```
@@ -206,11 +313,11 @@ module.exports = {
 
 - Now go to `http://localhost:3000`, your app should be running 🤘
 
-- Now lets install Web3Modal library(https://github.com/Web3Modal/web3modal). Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration. By default Web3Modal Library supports injected providers like (Metamask, Dapper, Gnosis Safe, Frame, Web3 Browsers, etc) and WalletConnect, You can also easily configure the library to support Portis, Fortmatic, Squarelink, Torus, Authereum, D'CENT Wallet and Arkane.
+- Now lets install Web3Modal library(https://github.com/Web3Modal/web3modal). Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration. By default Web3Modal Library supports injected providers like (Metamask, Dapper, Gnosis Safe, Frame, Web3 Browsers, etc), You can also easily configure the library to support Portis, Fortmatic, Squarelink, Torus, Authereum, D'CENT Wallet and Arkane.
   Open up a terminal pointing at`my-app` directory and execute this command
 
 ```bash
-  npm install --save web3modal
+  npm install web3modal
 ```
 
 - In the same terminal also install `ethers.js`
