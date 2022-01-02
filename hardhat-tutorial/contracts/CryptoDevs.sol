@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IWhitelist.sol";
 
 contract CryptoDevs is ERC721, Ownable {
-
     /**
      * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
      * token will be the concatenation of the `baseURI` and the `tokenId`.
@@ -34,13 +33,18 @@ contract CryptoDevs is ERC721, Ownable {
     // timestamp for even presale would end
     uint256 presaleEnded;
 
+    modifier onlyWhenNotPaused {
+        require(!_paused, "Contract currently paused");
+        _;
+    }
+
     /**
      * @dev ERC721 constructor takes in a `name` and a `symbol` to the token collection.
      * name in our case is `Crypto Devs` and symbol is `CD`.
      * Constructor for Crypto Devs takes in the baseURI to set _baseTokenURI for the collection.
      * It also initializes an instance of whitelist interface.
      */
-    constructor(string memory baseURI, address whitelistContract) ERC721("Crypto Devs", "CD") {
+    constructor (string memory baseURI, address whitelistContract) ERC721("Crypto Devs", "CD") {
         _baseTokenURI = baseURI;
         whitelist = IWhitelist(whitelistContract);
     }
@@ -50,30 +54,31 @@ contract CryptoDevs is ERC721, Ownable {
      */
     function startPresale() public onlyOwner {
         presaleStarted = true;
-        presaleEnded = block.timestamp + (5*30);
+        // Set presaleEnded time as current timestamp + 5 minutes
+        // Solidity has cool syntax for timestamps (seconds, minutes, hours, days, years)
+        presaleEnded = block.timestamp + 5 minutes;
     }
 
     /**
      * @dev presaleMint allows an user to mint one NFT per transaction during the presale. 
      */
-    function presaleMint() public payable {
+    function presaleMint() public payable onlyWhenNotPaused {
         require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
         require(whitelist.whitelistedAddresses(msg.sender), "You are not whitelisted");
-        require(!_paused, "Contract has been paused");
         require(tokenIds < maxTokenIds, "Exceeded maximum Cypto Devs supply");
         require(msg.value >= _price, "Ether sent is not correct");
         tokenIds += 1;
-        //_safeMint is a safer version of the _mint function as it checks if the msg.sender is a contract
-        // and if the contract can accept an ERC721.
+        //_safeMint is a safer version of the _mint function as it ensures that
+        // if the address being minted to is a contract, then it knows how to deal with ERC721 tokens
+        // If the address being minted to is not a contract, it works the same way as _mint
         _safeMint(msg.sender, tokenIds);
     }
 
     /**
     * @dev mint allows an user to mint 1 NFT per transaction after the presale has ended.
     */
-    function mint() public payable {
+    function mint() public payable onlyWhenNotPaused {
         require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
-        require(!_paused, "Contract has been paused");
         require(tokenIds < maxTokenIds, "Exceed maximum Cypto Devs supply");
         require(msg.value >= _price, "Ether sent is not correct");
         tokenIds += 1;
@@ -91,7 +96,7 @@ contract CryptoDevs is ERC721, Ownable {
     /**
     * @dev setPaused makes the contract paused or unpaused
      */
-    function setPaused(bool val) public onlyOwner{
+    function setPaused(bool val) public onlyOwner {
         _paused = val;
     }
  
@@ -100,7 +105,7 @@ contract CryptoDevs is ERC721, Ownable {
     * to the owner of the contract
      */
     function withdraw() public onlyOwner  {
-        address  _owner = owner();
+        address _owner = owner();
         uint256 amount = address(this).balance;
         (bool sent, ) =  _owner.call{value: amount}("");
         require(sent, "Failed to send Ether");
