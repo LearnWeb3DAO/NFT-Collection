@@ -28,10 +28,10 @@ contract CryptoDevs is ERC721, Ownable {
     IWhitelist whitelist;
 
     // boolean to keep track of when presale started
-    bool presaleStarted;
+    bool public presaleStarted;
 
     // timestamp for even presale would end
-    uint256 presaleEnded;
+    uint256 public presaleEnded;
 
     modifier onlyWhenNotPaused {
         require(!_paused, "Contract currently paused");
