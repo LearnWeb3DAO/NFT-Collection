@@ -1,17 +1,22 @@
 const { ethers } = require("hardhat");
 require("dotenv").config({ path: ".env" });
+const { WHITELIST_CONTRACT_ADDRESS, METADATA_URL } = require("../constants");
 
 async function main() {
-  const whitelistContract = process.env.WHITELIST_CONTRACT_ADDRESS;
+  // Address of the whitelist contract that you deployed in the previous module
+  const whitelistContract = WHITELIST_CONTRACT_ADDRESS;
+  console.log(whitelistContract);
+  // URL from where we can extract the metadata
+  const metadataURL = METADATA_URL;
   /*
   A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
   so cryptoDevsContract here is a factory for instances of our CryptoDevs contract.
-*/
+  */
   const cryptoDevsContract = await ethers.getContractFactory("CryptoDevs");
 
-  // here we deploy the contract
+  // deploy the contract
   const deployedCryptoDevsContract = await cryptoDevsContract.deploy(
-    "https://cryptodevs.vercel.app/api/metadata/",
+    metadataURL,
     whitelistContract
   );
 
