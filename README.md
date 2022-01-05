@@ -39,7 +39,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 
   and press `enter` for all the questions.
 
-- In the same terminal now install `@openzeppelin/contracts` as we would be importing [Openzeppelin's ERC721 Contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol) in our `CryptoDevs` contract.
+- In the same terminal now install `@openzeppelin/contracts` as we would be importing [Openzeppelin's ERC721Enumerable Contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol) in our `CryptoDevs` contract.
 
   ```bash
   npm install @openzeppelin/contracts
@@ -64,11 +64,11 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.4;
 
-    import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+    import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
     import "@openzeppelin/contracts/access/Ownable.sol";
     import "./IWhitelist.sol";
 
-    contract CryptoDevs is ERC721, Ownable {
+    contract CryptoDevs is ERC721Enumerable, Ownable {
         /**
          * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
          * token will be the concatenation of the `baseURI` and the `tokenId`.
@@ -788,7 +788,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 
   ```js
   export const abi =---your abi---
-  export const NFT_CONTRACT_ADDRESS = = "addres of your NFT contract"
+  export const NFT_CONTRACT_ADDRESS = = "address of your NFT contract"
   ```
 
 - Now in your terminal which is pointing to `my-app` folder, execute
