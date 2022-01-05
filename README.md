@@ -20,8 +20,7 @@ Lets start building 🚀
 ### Smart Contract
 
 First before we start building you would need to understand what an ERC721 is and why is it used for creating NFT's. You can find the entire explanation for ERC721 [here](https://eips.ethereum.org/EIPS/eip-721). Make sure you read the provided link before you proceed to next steps.
-To build the smart contract we would be using [Hardhat](https://hardhat.org/).
-Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words you can write your smart contract, deploy them, run tests, and debug your code.
+To build the smart contract we would be using [Hardhat](https://hardhat.org/). Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words you can write your smart contract, deploy them, run tests, and debug your code.
 
 - To setup a Hardhat project, Open up a terminal and execute these commands
 
@@ -48,21 +47,21 @@ Hardhat is an Ethereum development environment and framework designed for full s
 
 - We will need to call the `Whitelist Contract` that you deployed for your previous level to check for addresses that were whitelisted and give them presale access. As we only need to call `mapping(address => bool) public whitelistedAddresses;` We can create an interface for `Whitelist contract` with a function only for this mapping, this way we would save `gas` as we would not need to inherit and deploy the entire `Whitelist Contract` but only a part of it.
 
-- Create a new file inside the `contracts` direactory and call it `IWhitelist.sol`
+- Create a new file inside the `contracts` directory and call it `IWhitelist.sol`
 
   ```go
-  // SPDX-License-Identifier: MIT
-  pragma solidity ^0.8.0;
+      // SPDX-License-Identifier: MIT
+      pragma solidity ^0.8.4;
 
-  interface IWhitelist {
-      function whitelistedAddresses(address) external view returns (bool);
-  }
+      interface IWhitelist {
+          function whitelistedAddresses(address) external view returns (bool);
+      }
   ```
 
-- Create a new file inside the `contracts` directory called `CryptoDevs.sol`.
+- Now lets create a new file inside the `contracts` directory and call it `CryptoDevs.sol`
 
   ```go
-     // SPDX-License-Identifier: MIT
+    // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.4;
 
     import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -70,124 +69,124 @@ Hardhat is an Ethereum development environment and framework designed for full s
     import "./IWhitelist.sol";
 
     contract CryptoDevs is ERC721, Ownable {
-    /**
-     * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
-     * token will be the concatenation of the `baseURI` and the `tokenId`.
-     */
-    string _baseTokenURI;
+        /**
+         * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
+         * token will be the concatenation of the `baseURI` and the `tokenId`.
+         */
+        string _baseTokenURI;
 
-    //  _price is the price of one Crypto Dev NFT
-    uint256 public _price = 0.01 ether;
+        //  _price is the price of one Crypto Dev NFT
+        uint256 public _price = 0.01 ether;
 
-    // _paused is used to pause the contract in case of an emergency
-    bool public _paused;
+        // _paused is used to pause the contract in case of an emergency
+        bool public _paused;
 
-    // max number of CryptoDevs
-    uint256 public maxTokenIds = 20;
+        // max number of CryptoDevs
+        uint256 public maxTokenIds = 20;
 
-    // total number of tokenIds minted
-    uint256 public tokenIds;
+        // total number of tokenIds minted
+        uint256 public tokenIds;
 
-    // Whitelist contract instance
-    IWhitelist whitelist;
+        // Whitelist contract instance
+        IWhitelist whitelist;
 
-    // boolean to keep track of when presale started
-    bool public presaleStarted;
+        // boolean to keep track of when presale started
+        bool public presaleStarted;
 
-    // timestamp for even presale would end
-    uint256 public presaleEnded;
+        // timestamp for even presale would end
+        uint256 public presaleEnded;
 
-    modifier onlyWhenNotPaused {
-        require(!_paused, "Contract currently paused");
-        _;
-    }
+        modifier onlyWhenNotPaused {
+            require(!_paused, "Contract currently paused");
+            _;
+        }
 
-    /**
-     * @dev ERC721 constructor takes in a `name` and a `symbol` to the token collection.
-     * name in our case is `Crypto Devs` and symbol is `CD`.
-     * Constructor for Crypto Devs takes in the baseURI to set _baseTokenURI for the collection.
-     * It also initializes an instance of whitelist interface.
-     */
-    constructor (string memory baseURI, address whitelistContract) ERC721("Crypto Devs", "CD") {
-        _baseTokenURI = baseURI;
-        whitelist = IWhitelist(whitelistContract);
-    }
+        /**
+         * @dev ERC721 constructor takes in a `name` and a `symbol` to the token collection.
+         * name in our case is `Crypto Devs` and symbol is `CD`.
+         * Constructor for Crypto Devs takes in the baseURI to set _baseTokenURI for the collection.
+         * It also initializes an instance of whitelist interface.
+         */
+        constructor (string memory baseURI, address whitelistContract) ERC721("Crypto Devs", "CD") {
+            _baseTokenURI = baseURI;
+            whitelist = IWhitelist(whitelistContract);
+        }
 
-    /**
-    * @dev startPresale starts a presale for the whitelisted addresses
-     */
-    function startPresale() public onlyOwner {
-        presaleStarted = true;
-        // Set presaleEnded time as current timestamp + 5 minutes
-        // Solidity has cool syntax for timestamps (seconds, minutes, hours, days, years)
-        presaleEnded = block.timestamp + 5 minutes;
-    }
+        /**
+        * @dev startPresale starts a presale for the whitelisted addresses
+         */
+        function startPresale() public onlyOwner {
+            presaleStarted = true;
+            // Set presaleEnded time as current timestamp + 5 minutes
+            // Solidity has cool syntax for timestamps (seconds, minutes, hours, days, years)
+            presaleEnded = block.timestamp + 5 minutes;
+        }
 
-    /**
-     * @dev presaleMint allows an user to mint one NFT per transaction during the presale.
-     */
-    function presaleMint() public payable onlyWhenNotPaused {
-        require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
-        require(whitelist.whitelistedAddresses(msg.sender), "You are not whitelisted");
-        require(tokenIds < maxTokenIds, "Exceeded maximum Cypto Devs supply");
-        require(msg.value >= _price, "Ether sent is not correct");
-        tokenIds += 1;
-        //_safeMint is a safer version of the _mint function as it ensures that
-        // if the address being minted to is a contract, then it knows how to deal with ERC721 tokens
-        // If the address being minted to is not a contract, it works the same way as _mint
-        _safeMint(msg.sender, tokenIds);
-    }
+        /**
+         * @dev presaleMint allows an user to mint one NFT per transaction during the presale.
+         */
+        function presaleMint() public payable onlyWhenNotPaused {
+            require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
+            require(whitelist.whitelistedAddresses(msg.sender), "You are not whitelisted");
+            require(tokenIds < maxTokenIds, "Exceeded maximum Cypto Devs supply");
+            require(msg.value >= _price, "Ether sent is not correct");
+            tokenIds += 1;
+            //_safeMint is a safer version of the _mint function as it ensures that
+            // if the address being minted to is a contract, then it knows how to deal with ERC721 tokens
+            // If the address being minted to is not a contract, it works the same way as _mint
+            _safeMint(msg.sender, tokenIds);
+        }
 
-    /**
-    * @dev mint allows an user to mint 1 NFT per transaction after the presale has ended.
-    */
-    function mint() public payable onlyWhenNotPaused {
-        require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
-        require(tokenIds < maxTokenIds, "Exceed maximum Cypto Devs supply");
-        require(msg.value >= _price, "Ether sent is not correct");
-        tokenIds += 1;
-        _safeMint(msg.sender, tokenIds);
-    }
+        /**
+        * @dev mint allows an user to mint 1 NFT per transaction after the presale has ended.
+        */
+        function mint() public payable onlyWhenNotPaused {
+            require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
+            require(tokenIds < maxTokenIds, "Exceed maximum Cypto Devs supply");
+            require(msg.value >= _price, "Ether sent is not correct");
+            tokenIds += 1;
+            _safeMint(msg.sender, tokenIds);
+        }
 
-    /**
-    * @dev _baseURI overides the Openzeppelin's ERC721 implementation which by default
-    * returned an empty string for the baseURI
-    */
-    function _baseURI() internal view virtual override returns (string memory) {
-        return _baseTokenURI;
-    }
+        /**
+        * @dev _baseURI overides the Openzeppelin's ERC721 implementation which by default
+        * returned an empty string for the baseURI
+        */
+        function _baseURI() internal view virtual override returns (string memory) {
+            return _baseTokenURI;
+        }
 
-    /**
-    * @dev setPaused makes the contract paused or unpaused
-     */
-    function setPaused(bool val) public onlyOwner {
-        _paused = val;
-    }
+        /**
+        * @dev setPaused makes the contract paused or unpaused
+         */
+        function setPaused(bool val) public onlyOwner {
+            _paused = val;
+        }
 
-    /**
-    * @dev withdraw sends all the ether in the contract
-    * to the owner of the contract
-     */
-    function withdraw() public onlyOwner  {
-        address _owner = owner();
-        uint256 amount = address(this).balance;
-        (bool sent, ) =  _owner.call{value: amount}("");
-        require(sent, "Failed to send Ether");
-    }
+        /**
+        * @dev withdraw sends all the ether in the contract
+        * to the owner of the contract
+         */
+        function withdraw() public onlyOwner  {
+            address _owner = owner();
+            uint256 amount = address(this).balance;
+            (bool sent, ) =  _owner.call{value: amount}("");
+            require(sent, "Failed to send Ether");
+        }
 
-     // Function to receive Ether. msg.data must be empty
-    receive() external payable {}
+         // Function to receive Ether. msg.data must be empty
+        receive() external payable {}
 
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
+        // Fallback function is called when msg.data is not empty
+        fallback() external payable {}
     }
   ```
 
 - Compile the contract, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
 
-```bash
-   npx hardhat compile
-```
+  ```bash
+     npx hardhat compile
+  ```
 
 - Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
 
@@ -197,41 +196,41 @@ Hardhat is an Ethereum development environment and framework designed for full s
 
 - Now create a `.env` file in the `hardhat-tutorial` folder and add the following lines, use the instructions in the comments to get your Alchemy API Key URL and RINKEBY Private Key. Make sure that the account from which you get your rinkeby private key is funded with Rinkeby Ether.
 
-```
+  ```bash
+  // Go to https://www.alchemyapi.io, sign up, create
+  // a new App in its dashboard and select the network as Rinkeby, and replace "add-the-alchemy-key-url-here" with its key url
+  ALCHEMY_API_KEY_URL="add-the-alchemy-key-url-here"
 
-// Go to https://www.alchemyapi.io, sign up, create
-// a new App in its dashboard and select the network as Rinkeby, and replace "add-the-alchemy-key-url-here" with its key url
-ALCHEMY_API_KEY_URL="add-the-alchemy-key-url-here"
+  // Replace this private key with your RINKEBY account private key
+  // To export your private key from Metamask, open Metamask and
+  // go to Account Details > Export Private Key
+  // Be aware of NEVER putting real Ether into testing accounts
+  RINKEBY_PRIVATE_KEY="add-the-rinkeby-private-key-here"
+  ```
 
-// Replace this private key with your RINKEBY account private key
-// To export your private key from Metamask, open Metamask and
-// go to Account Details > Export Private Key
-// Be aware of NEVER putting real Ether into testing accounts
-RINKEBY_PRIVATE_KEY="add-the-rinkeby-private-key-here"
-
-// Address of the Whitelist Contract that you deployed
-WHITELIST_CONTRACT_ADDRESS="address-of-the-whitelist-contract"
-```
-
-- Lets deploy the contract to `rinkeby` network.Create a new file named `deploy.js` under the `scripts` folder
+- Lets deploy the contract to `rinkeby` network. Create a new file named `deploy.js` under the `scripts` folder
 
 - Now we would write some code to deploy the contract in `deploy.js` file.
 
   ```js
   const { ethers } = require("hardhat");
   require("dotenv").config({ path: ".env" });
+  const { WHITELIST_CONTRACT_ADDRESS, METADATA_URL } = require("../constants");
 
   async function main() {
-    const whitelistContract = process.env.WHITELIST_CONTRACT_ADDRESS;
+    // Address of the whitelist contract that you deployed in the previous module
+    const whitelistContract = WHITELIST_CONTRACT_ADDRESS;
+    // URL from where we can extract the metadata for a Crypto Dev NFT
+    const metadataURL = METADATA_URL;
     /*
     A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
     so cryptoDevsContract here is a factory for instances of our CryptoDevs contract.
-  */
+    */
     const cryptoDevsContract = await ethers.getContractFactory("CryptoDevs");
 
-    // here we deploy the contract
+    // deploy the contract
     const deployedCryptoDevsContract = await cryptoDevsContract.deploy(
-      "https://cryptodevs.vercel.app/api/metadata/",
+      metadataURL,
       whitelistContract
     );
 
@@ -251,26 +250,38 @@ WHITELIST_CONTRACT_ADDRESS="address-of-the-whitelist-contract"
     });
   ```
 
+- As you can read, `deploy.js` requires some constants. Lets create a folder named `constants` under the `hardhat-tutorial` folder
+- Now add an `index.js` file inside the `constants` folder and add the following lines to the file. Replace "address-of-the-whitelist-contract" with the address of the whitelist contract that you deployed in the previous tutorial. For Metadata_URL, just copy the sample one that has been provided. We would replace this further down in the tutorial.
+
+  ```js
+  // Address of the Whitelist Contract that you deployed
+  const WHITELIST_CONTRACT_ADDRESS = "address-of-the-whitelist-contract";
+  // URL to extract Metadata for a Crypto Dev NFT
+  const METADATA_URL = "https://nft-collection-sneh1999.vercel.app/api/";
+
+  module.exports = { WHITELIST_CONTRACT_ADDRESS, METADATA_URL };
+  ```
+
 - Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhart.config.js` file with the given below lines
 
-```js
-require("@nomiclabs/hardhat-waffle");
-require("dotenv").config({ path: ".env" });
+  ```js
+  require("@nomiclabs/hardhat-waffle");
+  require("dotenv").config({ path: ".env" });
 
-const ALCHEMY_API_KEY_URL = process.env.ALCHEMY_API_KEY_URL;
+  const ALCHEMY_API_KEY_URL = process.env.ALCHEMY_API_KEY_URL;
 
-const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
+  const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 
-module.exports = {
-  solidity: "0.8.4",
-  networks: {
-    rinkeby: {
-      url: ALCHEMY_API_KEY_URL,
-      accounts: [RINKEBY_PRIVATE_KEY],
+  module.exports = {
+    solidity: "0.8.4",
+    networks: {
+      rinkeby: {
+        url: ALCHEMY_API_KEY_URL,
+        accounts: [RINKEBY_PRIVATE_KEY],
+      },
     },
-  },
-};
-```
+  };
+  ```
 
 - To deploy, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
   ```bash
@@ -284,12 +295,12 @@ module.exports = {
 - First, You would need to create a new `next` app. Your folder structure should look something like
 
   ```
-     - Crypto-Devs-Dapp
+     - NFT-Collection
          - hardhat-tutorial
          - next-app
   ```
 
-- To create this `next-app`, in the terminal point to Whitelist-Dapp folder and type
+- To create this `next-app`, in the terminal point to NFT-Collection folder and type
 
   ```bash
       npx create-next-app@latest
@@ -309,17 +320,17 @@ module.exports = {
 - Now lets install Web3Modal library(https://github.com/Web3Modal/web3modal). Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration. By default Web3Modal Library supports injected providers like (Metamask, Dapper, Gnosis Safe, Frame, Web3 Browsers, etc), You can also easily configure the library to support Portis, Fortmatic, Squarelink, Torus, Authereum, D'CENT Wallet and Arkane.
   Open up a terminal pointing at`my-app` directory and execute this command
 
-```bash
-  npm install web3modal
-```
+  ```bash
+    npm install web3modal
+  ```
 
 - In the same terminal also install `ethers.js`
 
-```bash
-npm i ethers
-```
+  ```bash
+  npm i ethers
+  ```
 
-- In your public folder, download this folder and all the images in it (https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs). Make sure that the name of the downloaded folder is cryptodevs
+- In your public folder, download this folder and all the images in it (https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs). Make sure that the name of the downloaded folder is `cryptodevs`
 
 - Now go to styles folder and replace all the contents of `Home.modules.css` file with the following code, this would add some styling to your dapp:
 
@@ -786,7 +797,13 @@ npm i ethers
   npm run dev
   ```
 
-Your whitelist dapp should now work without errors 🚀
+Your Crypto Devs NFT dapp should now work without errors 🚀
+
+---
+
+### Push to github
+
+Make sure before proceeding you have pushed all your code to github :)
 
 ---
 
@@ -795,15 +812,63 @@ Your whitelist dapp should now work without errors 🚀
 We will now deploy your dApp, so that everyone can see your website and you can share it with all of your LearnWeb3 DAO friends.
 
 - Go to https://vercel.com/ and sign in with your GitHub
-- Then click on `New Project` button and then select your Whitelist dApp repo
-- ![](https://i.imgur.com/ZRjfkCE.png)
+- Then click on `New Project` button and then select your NFT-Collection repo
 - When configuring your new project, Vercel will allow you to customize your `Root Directory`
 - Click `Edit` next to `Root Directory` and set it to `my-app`
+- Select the Framework as `Next.js`
 - Click `Deploy`
-- Now you can see your deployed website by going to your dashboard, selecting your project, and copying the URL from there!
+  ![](https://i.imgur.com/oaEt3Tj.png)
 
-Share your website in Discord :D
+- Now you can see your deployed website by going to your dashboard, selecting your project, and copying the `domain` from there! Save the `domain` on notepad, you would need it later.
 
 ## View your Collection on Opensea
 
-Now lets make your collection available on Opensea
+Now lets make your collection is available on Opensea
+
+To make the collection available on Opensea, we would need to create a metadata endpoint. This endpoint would return the metadata for an NFT given its `tokenId`.
+
+- Open your `my-app` folder and under`pages/api` folder, create a new file named `[tokenId].js`(Make sure the name has the brackets as well). Adding the brackets helps create dynamic routes in [next js](https://nextjs.org/docs/routing/dynamic-routes)
+- Add the following lines to `[tokenId].js` file. Read about adding API routes in `next js` [here](https://nextjs.org/docs/api-routes/introduction)
+
+  ```js
+  export default function handler(req, res) {
+    // get the tokenId from the query params
+    const tokenId = req.query.tokenId;
+    // As all the images are uploaded on github, we can extract the images from github directly.
+    const image_url =
+      "https://raw.githubusercontent.com/LearnWeb3DAO/NFT-Collection/main/my-app/public/cryptodevs/";
+    // The api is sending back metadata for a Crypto Dev
+    // To make our collection compatible with Opensea, we need to follow some Metadata standards
+    // when sending back the response from the api
+    // More info can be found here: https://docs.opensea.io/docs/metadata-standards
+    res.status(200).json({
+      name: "Crypto Dev #" + tokenId,
+      description: "Crypto Dev is a collection of developers in crypto",
+      image: image_url + tokenId + ".svg",
+    });
+  }
+  ```
+
+- Now you have an api route which `Opensea` can call to retrieve the metadata for the NFT
+
+- Lets deploy a new `Crypto Devs` contract with this new api route as your `METADATA_URL`
+
+- Open your `hardhat-tutorial/constants` folder and inside your `index.js` file, replace "https://nft-collection-sneh1999.vercel.app/api/" with the domain which you saved to notepad and add "/api/" to its end.
+
+- Save the file and open up a new terminal pointing to `hardhat-tutorial` folder and deploy a new contract
+  ```bash
+      npx hardhat run scripts/deploy.js --network rinkeby
+  ```
+- Save the new NFT contract address to a notepad.
+
+- Open up "my-app/constants" folder and inside the `index.js` file replace the old NFT contract address with the new one
+
+- Push all the code to github and wait for vercel to deploy the new code.
+
+- After vercel has deployed your code, open up your website and mint an NFT
+
+- In your browser open up this link by replacing "your-nft-contract-address" with the address of your NFT contract "https://testnets.opensea.io/assets/your-nft-contract-address/1"
+
+- Your NFT is now available on Opensea 🚀 🥳
+
+- Share your Opensea link with everyone on discord :) and spread happiness.
