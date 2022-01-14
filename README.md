@@ -2,6 +2,8 @@
 
 Now its time for you to launch your own NFT collection - `Crypto Devs`.
 
+![](https://i.imgur.com/fVxV66f.png)
+
 ## Requirements
 
 - There should only exist 20 Crypto Dev NFT's and each one of them should be unique.
@@ -15,11 +17,29 @@ Lets start building 🚀
 
 - You can have completed the [Whitelist dApp tutorial](https://github.com/LearnWeb3DAO/Whitelist-Dapp)
 
+## Theory
+
+- What is a Non-Fungible Token?
+  Fungible means to be the same or interchangeable eg Eth is fungible. With this in mind, NFTs are unique; each one is different. Every single token has unique characteristics and values. They are all distinguishable from one another and are not interchangeable eg Unique Art
+
+- What is ERC-721?
+  ERC-721 is an open standard that describes how to build Non-Fungible tokens on EVM (Ethereum Virtual Machine) compatible blockchains; it is a standard interface for Non-Fungible tokens; it has a set of rules which make it easy to work with NFTs. Before moving ahead have a look at all the functions supported by [ERC721](https://docs.openzeppelin.com/contracts/3.x/api/token/erc721)
+
 ## Build
 
 ### Smart Contract
 
-First before we start building you would need to understand what an ERC721 is and why is it used for creating NFT's. You can find the entire explanation for ERC721 [here](https://eips.ethereum.org/EIPS/eip-721). Make sure you read the provided link before you proceed to next steps.
+- We would also be using [`Ownable.sol`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol) from Openzeppelin which helps you manage the `Ownership` of a contract
+
+  - By default, the owner of an Ownable contract is the account that deployed it, which is usually exactly what you want.
+  - Ownable also lets you:
+    - transferOwnership from the owner account to a new one, and
+    - renounceOwnership for the owner to relinquish this administrative privilege, a common pattern after an initial stage with centralized administration is over.
+
+- We would also be using an extension of ERC721 known as [ERC721 Enumerable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol)
+  - ERC721 Enumerable is helps you to keep track of all the tokenIds in the contract and also the tokensIds held by an address for a given contract.
+  - Please have a look at the [functions](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721Enumerable) it implements before moving ahead
+
 To build the smart contract we would be using [Hardhat](https://hardhat.org/). Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words you can write your smart contract, deploy them, run tests, and debug your code.
 
 - To setup a Hardhat project, Open up a terminal and execute these commands
@@ -185,7 +205,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 - Compile the contract, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
 
   ```bash
-     npx hardhat compile
+    npx hardhat compile
   ```
 
 - Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
@@ -285,7 +305,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 
 - To deploy, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
   ```bash
-      npx hardhat run scripts/deploy.js --network rinkeby
+    npx hardhat run scripts/deploy.js --network rinkeby
   ```
 - Save the Crypto Devs Contract Address that was printed on your terminal in your notepad, you would need it futher down in the tutorial.
 
@@ -297,13 +317,13 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
   ```
      - NFT-Collection
          - hardhat-tutorial
-         - next-app
+         - my-app
   ```
 
-- To create this `next-app`, in the terminal point to NFT-Collection folder and type
+- To create this `my-app`, in the terminal point to NFT-Collection folder and type
 
   ```bash
-      npx create-next-app@latest
+    npx create-next-app@latest
   ```
 
   and press `enter` for all the questions
@@ -784,7 +804,10 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
   ```
 
 - Now create a new folder under the my-app folder and name it `constants`.
-- In the constants folder create a file, `index.js` and paste the following code. Replace `"addres of your NFT contract"` with the address of the CryptoDevs contract that you deployed and saved to your notepad. Replace `---your abi---` with the abi of your CryptoDevs Contract. To get the abi for your contract, go to your `hardhat-tutorial/artifacts/contracts/CryptoDevs.sol` folder and from your `CryptoDevs.json` file get the array marked under the `"abi"` key.
+- In the constants folder create a file, `index.js` and paste the following code.
+
+  - Replace `"addres of your NFT contract"` with the address of the CryptoDevs contract that you deployed and saved to your notepad.
+  - Replace `---your abi---` with the abi of your CryptoDevs Contract. To get the abi for your contract, go to your `hardhat-tutorial/artifacts/contracts/CryptoDevs.sol` folder and from your `CryptoDevs.json` file get the array marked under the `"abi"` key.
 
   ```js
   export const abi =---your abi---
@@ -803,7 +826,7 @@ Your Crypto Devs NFT dapp should now work without errors 🚀
 
 ### Push to github
 
-Make sure before proceeding you have pushed all your code to github :)
+Make sure before proceeding you have [pushed all your code to github](https://medium.com/hackernoon/a-gentle-introduction-to-git-and-github-the-eli5-way-43f0aa64f2e4) :)
 
 ---
 
@@ -857,7 +880,7 @@ To make the collection available on Opensea, we would need to create a metadata 
 
 - Save the file and open up a new terminal pointing to `hardhat-tutorial` folder and deploy a new contract
   ```bash
-      npx hardhat run scripts/deploy.js --network rinkeby
+    npx hardhat run scripts/deploy.js --network rinkeby
   ```
 - Save the new NFT contract address to a notepad.
 
@@ -867,7 +890,7 @@ To make the collection available on Opensea, we would need to create a metadata 
 
 - After vercel has deployed your code, open up your website and mint an NFT
 
-- In your browser open up this link by replacing "your-nft-contract-address" with the address of your NFT contract "https://testnets.opensea.io/assets/your-nft-contract-address/1"
+- After your transaction gets successful,In your browser open up this link by replacing `your-nft-contract-address` with the address of your NFT contract (https://testnets.opensea.io/assets/your-nft-contract-address/1)
 
 - Your NFT is now available on Opensea 🚀 🥳
 
