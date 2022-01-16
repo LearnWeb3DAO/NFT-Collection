@@ -823,7 +823,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
 
   ```js
   export const abi =---your abi---
-  export const NFT_CONTRACT_ADDRESS = = "address of your NFT contract"
+  export const NFT_CONTRACT_ADDRESS = "address of your NFT contract"
   ```
 
 - Now in your terminal which is pointing to `my-app` folder, execute
