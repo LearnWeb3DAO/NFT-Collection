@@ -327,7 +327,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 - In the same terminal also install `ethers.js`
 
   ```bash
-  npm i ethers
+  npm install ethers
   ```
 
 - In your public folder, download this folder and all the images in it (https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs). Make sure that the name of the downloaded folder is `cryptodevs`
