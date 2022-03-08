@@ -160,7 +160,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         function presaleMint() public payable onlyWhenNotPaused {
             require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
             require(whitelist.whitelistedAddresses(msg.sender), "You are not whitelisted");
-            require(tokenIds < maxTokenIds, "Exceeded maximum Cypto Devs supply");
+            require(tokenIds < maxTokenIds, "Exceeded maximum Crypto Devs supply");
             require(msg.value >= _price, "Ether sent is not correct");
             tokenIds += 1;
             //_safeMint is a safer version of the _mint function as it ensures that
@@ -174,7 +174,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         */
         function mint() public payable onlyWhenNotPaused {
             require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
-            require(tokenIds < maxTokenIds, "Exceed maximum Cypto Devs supply");
+            require(tokenIds < maxTokenIds, "Exceed maximum Crypto Devs supply");
             require(msg.value >= _price, "Ether sent is not correct");
             tokenIds += 1;
             _safeMint(msg.sender, tokenIds);
