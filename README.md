@@ -125,7 +125,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         // boolean to keep track of when presale started
         bool public presaleStarted;
 
-        // timestamp for even presale would end
+        // timestamp for when presale would end
         uint256 public presaleEnded;
 
         modifier onlyWhenNotPaused {
