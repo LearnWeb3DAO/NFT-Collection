@@ -15,7 +15,7 @@ Lets start building 🚀
 
 ## Prerequisites
 
-- You can have completed the [Whitelist dApp tutorial](https://github.com/LearnWeb3DAO/Whitelist-Dapp)
+- You should have completed the [Whitelist dApp tutorial](https://github.com/LearnWeb3DAO/Whitelist-Dapp)
 
 ## Theory
 
