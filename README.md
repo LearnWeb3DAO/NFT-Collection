@@ -155,7 +155,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         }
 
         /**
-         * @dev presaleMint allows an user to mint one NFT per transaction during the presale.
+         * @dev presaleMint allows a user to mint one NFT per transaction during the presale.
          */
         function presaleMint() public payable onlyWhenNotPaused {
             require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
