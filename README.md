@@ -125,7 +125,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         // boolean to keep track of when presale started
         bool public presaleStarted;
 
-        // timestamp for even presale would end
+        // timestamp for when presale would end
         uint256 public presaleEnded;
 
         modifier onlyWhenNotPaused {
@@ -155,7 +155,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         }
 
         /**
-         * @dev presaleMint allows an user to mint one NFT per transaction during the presale.
+         * @dev presaleMint allows a user to mint one NFT per transaction during the presale.
          */
         function presaleMint() public payable onlyWhenNotPaused {
             require(presaleStarted && block.timestamp < presaleEnded, "Presale is not running");
@@ -170,7 +170,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         }
 
         /**
-        * @dev mint allows an user to mint 1 NFT per transaction after the presale has ended.
+        * @dev mint allows a user to mint 1 NFT per transaction after the presale has ended.
         */
         function mint() public payable onlyWhenNotPaused {
             require(presaleStarted && block.timestamp >=  presaleEnded, "Presale has not ended yet");
