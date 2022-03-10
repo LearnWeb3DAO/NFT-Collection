@@ -122,7 +122,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         // Whitelist contract instance
         IWhitelist whitelist;
 
-        // boolean to keep track of when presale started
+        // boolean to keep track of whether presale started or not
         bool public presaleStarted;
 
         // timestamp for when presale would end
