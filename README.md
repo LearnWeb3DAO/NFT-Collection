@@ -122,7 +122,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         // Whitelist contract instance
         IWhitelist whitelist;
 
-        // boolean to keep track of when presale started
+        // boolean to keep track of whether presale started or not
         bool public presaleStarted;
 
         // timestamp for when presale would end
@@ -587,7 +587,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, provider);
         // call the presaleEnded from the contract
         const _presaleEnded = await nftContract.presaleEnded();
-        // _presaleEnded is a Big Number, so we are using the lt(less than function) insteal of `<`
+        // _presaleEnded is a Big Number, so we are using the lt(less than function) instead of `<`
         // Date.now()/1000 returns the current time in seconds
         // We compare if the _presaleEnded timestamp is less than the current time
         // which means presale has ended
