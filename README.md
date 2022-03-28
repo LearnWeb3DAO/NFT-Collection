@@ -27,6 +27,12 @@ Lets start building 🚀
 
 ## Build
 
+## Prefer a Video?
+If you would rather learn from a video, we have a recording available of this tutorial on our YouTube. Watch the video by clicking on the screenshot below, or go ahead and read the tutorial!
+[![NFT-Collection Tutorial Part-1](https://i.imgur.com/IwUQ60q.png)](https://youtu.be/VocEb6qYXKs "NFT-Collection Tutorial")
+[![NFT-Collection Tutorial Part-2](https://i.imgur.com/PuXpET6.png)](https://youtu.be/_g4UQHxhvPo "NFT-Collection Tutorial")
+
+
 ### Smart Contract
 
 - We would also be using [`Ownable.sol`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol) from Openzeppelin which helps you manage the `Ownership` of a contract
