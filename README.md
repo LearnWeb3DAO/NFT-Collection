@@ -51,6 +51,8 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
 - To setup a Hardhat project, Open up a terminal and execute these commands
 
   ```bash
+  mkdir NFT-Collection
+  cd NFT-Collection
   mkdir hardhat-tutorial
   cd hardhat-tutorial
   npm init --yes
