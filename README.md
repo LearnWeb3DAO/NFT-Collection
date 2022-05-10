@@ -28,10 +28,10 @@ Lets start building 🚀
 ## Build
 
 ## Prefer a Video?
+
 If you would rather learn from a video, we have a recording available of this tutorial on our YouTube. Watch the video by clicking on the screenshot below, or go ahead and read the tutorial!
 [![NFT-Collection Tutorial Part-1](https://i.imgur.com/IwUQ60q.png)](https://youtu.be/VocEb6qYXKs "NFT-Collection Tutorial")
 [![NFT-Collection Tutorial Part-2](https://i.imgur.com/PuXpET6.png)](https://youtu.be/_g4UQHxhvPo "NFT-Collection Tutorial")
-
 
 ### Smart Contract
 
@@ -56,6 +56,7 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
   npm init --yes
   npm install --save-dev hardhat
   ```
+
 - In the same directory where you installed Hardhat run:
 
   ```bash
@@ -219,6 +220,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         fallback() external payable {}
     }
   ```
+
 - Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
 
   ```bash
@@ -321,9 +323,11 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   ```
   
 - To deploy, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
+
   ```bash
     npx hardhat run scripts/deploy.js --network rinkeby
   ```
+
 - Save the Crypto Devs Contract Address that was printed on your terminal in your notepad, you would need it futher down in the tutorial.
 
 ### Website
@@ -354,7 +358,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
 
 - Now go to `http://localhost:3000`, your app should be running 🤘
 
-- Now lets install Web3Modal library(https://github.com/Web3Modal/web3modal). Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration. By default Web3Modal Library supports injected providers like (Metamask, Dapper, Gnosis Safe, Frame, Web3 Browsers, etc), You can also easily configure the library to support Portis, Fortmatic, Squarelink, Torus, Authereum, D'CENT Wallet and Arkane.
+- Now lets install Web3Modal library(<https://github.com/Web3Modal/web3modal>). Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration. By default Web3Modal Library supports injected providers like (Metamask, Dapper, Gnosis Safe, Frame, Web3 Browsers, etc), You can also easily configure the library to support Portis, Fortmatic, Squarelink, Torus, Authereum, D'CENT Wallet and Arkane.
   Open up a terminal pointing at`my-app` directory and execute this command
 
   ```bash
@@ -367,7 +371,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   npm install ethers
   ```
 
-- In your public folder, download this folder and all the images in it (https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs). Make sure that the name of the downloaded folder is `cryptodevs`
+- In your public folder, download this folder and all the images in it (<https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs>). Make sure that the name of the downloaded folder is `cryptodevs`. You can use a tool like <https://download-directory.github.io/> to download a single folder hosted on Github.
 
 - Now go to styles folder and replace all the contents of `Home.modules.css` file with the following code, this would add some styling to your dapp:
 
@@ -851,7 +855,7 @@ Make sure before proceeding you have [pushed all your code to github](https://me
 
 We will now deploy your dApp, so that everyone can see your website and you can share it with all of your LearnWeb3 DAO friends.
 
-- Go to https://vercel.com/ and sign in with your GitHub
+- Go to <https://vercel.com/> and sign in with your GitHub
 - Then click on `New Project` button and then select your NFT-Collection repo
 - When configuring your new project, Vercel will allow you to customize your `Root Directory`
 - Click `Edit` next to `Root Directory` and set it to `my-app`
@@ -896,9 +900,11 @@ To make the collection available on Opensea, we would need to create a metadata 
 - Open your `hardhat-tutorial/constants` folder and inside your `index.js` file, replace "https://nft-collection-sneh1999.vercel.app/api/" with the domain which you saved to notepad and add "/api/" to its end.
 
 - Save the file and open up a new terminal pointing to `hardhat-tutorial` folder and deploy a new contract
+
   ```bash
     npx hardhat run scripts/deploy.js --network rinkeby
   ```
+
 - Save the new NFT contract address to a notepad.
 
 - Open up "my-app/constants" folder and inside the `index.js` file replace the old NFT contract address with the new one
@@ -907,7 +913,7 @@ To make the collection available on Opensea, we would need to create a metadata 
 
 - After vercel has deployed your code, open up your website and mint an NFT
 
-- After your transaction gets successful,In your browser open up this link by replacing `your-nft-contract-address` with the address of your NFT contract (https://testnets.opensea.io/assets/your-nft-contract-address/1)
+- After your transaction gets successful,In your browser open up this link by replacing `your-nft-contract-address` with the address of your NFT contract (<https://testnets.opensea.io/assets/your-nft-contract-address/1>)
 
 - Your NFT is now available on Opensea 🚀 🥳
 
