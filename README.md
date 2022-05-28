@@ -367,7 +367,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   npm install ethers
   ```
 
-- In your public folder, download this folder and all the images in it (https://github.com/LearnWeb3DAO/NFT-Collection/tree/main/my-app/public/cryptodevs). Make sure that the name of the downloaded folder is `cryptodevs`
+- In your public folder, download this folder and all the images in it ([Download Link](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2FLearnWeb3DAO%2FNFT-Collection%2Ftree%2Fmain%2Fmy-app%2Fpublic%2Fcryptodevs)). Make sure that the name of the downloaded folder is `cryptodevs`
 
 - Now go to styles folder and replace all the contents of `Home.modules.css` file with the following code, this would add some styling to your dapp:
 
