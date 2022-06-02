@@ -825,7 +825,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
 - Now create a new folder under the my-app folder and name it `constants`.
 - In the constants folder create a file, `index.js` and paste the following code.
 
-  - Replace `"addres of your NFT contract"` with the address of the CryptoDevs contract that you deployed and saved to your notepad.
+  - Replace `"address of your NFT contract"` with the address of the CryptoDevs contract that you deployed and saved to your notepad.
   - Replace `---your abi---` with the abi of your CryptoDevs Contract. To get the abi for your contract, go to your `hardhat-tutorial/artifacts/contracts/CryptoDevs.sol` folder and from your `CryptoDevs.json` file get the array marked under the `"abi"` key.
 
   ```js
