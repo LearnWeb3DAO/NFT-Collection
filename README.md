@@ -64,20 +64,20 @@ To build the smart contract we would be using [Hardhat](https://hardhat.org/). H
   npx hardhat
   ```
 
-  - Select `Create a basic sample project`
+  - Select `Create a Javascript project`
   - Press enter for the already specified `Hardhat Project root`
   - Press enter for the question on if you want to add a `.gitignore`
-  - Press enter for `Do you want to install this sample project's dependencies with npm (@nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers ethers)?`
+  - Press enter for `Do you want to install this sample project's dependencies with npm (@nomicfoundation/hardhat-toolbox)?`
 
 Now you have a hardhat project ready to go!
 
-If you are not on mac, please do this extra step and install these libraries as well :)
+If you are on Windows, please do this extra step and install these libraries as well :)
 
 ```bash
-npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers ethers
+npm install --save-dev @nomicfoundation/hardhat-toolbox
 ```
 
-  and press `enter` for all the questions.
+  and press `Enter` for all the questions.
 
 - In the same terminal now install `@openzeppelin/contracts` as we would be importing [Openzeppelin's ERC721Enumerable Contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol) in our `CryptoDevs` contract.
 
@@ -221,7 +221,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
         fallback() external payable {}
     }
   ```
-- Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at`hardhat-tutorial` directory and execute this command
+- Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at `hardhat-tutorial` directory and execute this command
 
   ```bash
   npm install dotenv
@@ -241,7 +241,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   RINKEBY_PRIVATE_KEY="add-the-rinkeby-private-key-here"
   ```
 
-- Lets deploy the contract to `rinkeby` network. Create a new file named `deploy.js` under the `scripts` folder
+- Lets deploy the contract to `rinkeby` network. Create a new file, or replace the default file, named `deploy.js` under the `scripts` folder
 
 - Now we would write some code to deploy the contract in `deploy.js` file.
 
@@ -295,7 +295,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   module.exports = { WHITELIST_CONTRACT_ADDRESS, METADATA_URL };
   ```
 
-- Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhart.config.js` file with the given below lines
+- Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhat.config.js` file with the given below lines
 
   ```js
   require("@nomiclabs/hardhat-waffle");
@@ -316,7 +316,7 @@ npm install --save-dev @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs
   };
   ```
   
-- Compile the contract, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
+- Compile the contract, open up a terminal pointing at `hardhat-tutorial` directory and execute this command
 
   ```bash
     npx hardhat compile
