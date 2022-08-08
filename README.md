@@ -6,12 +6,13 @@ Now its time for you to launch your own NFT collection - `Crypto Devs`.
 
 ## Requirements
 
-- There should only exist 20 Crypto Dev NFT's and each one of them should be unique.
-- User's should be able to mint only 1 NFT with one transaction.
-- Whitelisted users, should have a 5 min presale period before the actual sale where they are guaranteed 1 NFT per transaction.
+- There should only exist 20 Unique Crypto Dev NFTs.
+- Users should be able to mint only 1 NFT with one transaction.
+- Whitelisted users should have a 5 minute presale time  before the actual sale  begins.
+- On Presale, each transaction is guaranteed to obtain exactly 1 NFT. 
 - There should be a website for your NFT Collection.
 
-Lets start building 🚀
+With these requirements in mind , Lets start building 🚀
 
 ## Prerequisites
 
@@ -20,10 +21,12 @@ Lets start building 🚀
 ## Theory
 
 - What is a Non-Fungible Token?
-  Fungible means to be the same or interchangeable eg Eth is fungible. With this in mind, NFTs are unique; each one is different. Every single token has unique characteristics and values. They are all distinguishable from one another and are not interchangeable eg Unique Art
+  - Fungible means to be the same or interchangeable e.g Eth is fungible.
+  - So , NFTs mean the tokens that can not be the same. 
+  - Every single token has some characteristics and values that makes them unqiue from one another. They are not interchangeable e.g Unique Art.
 
 - What is ERC-721?
-  ERC-721 is an open standard that describes how to build Non-Fungible tokens on EVM (Ethereum Virtual Machine) compatible blockchains; it is a standard interface for Non-Fungible tokens; it has a set of rules which make it easy to work with NFTs. Before moving ahead have a look at all the functions supported by [ERC721](https://docs.openzeppelin.com/contracts/3.x/api/token/erc721)
+  ERC-721 is an open standard that describes how to build Non-Fungible tokens on EVM (Ethereum Virtual Machine) compatible blockchains. It is a standard interface for Non-Fungible tokens. It has a set of rules which make it easy to work with NFTs. Before moving ahead , have a look at all the functions supported by [ERC721](https://docs.openzeppelin.com/contracts/3.x/api/token/erc721)
 
 ## Build
 
@@ -43,10 +46,10 @@ If you would rather learn from a video, we have a recording available of this tu
     - renounceOwnership for the owner to relinquish this administrative privilege, a common pattern after an initial stage with centralized administration is over.
 
 - We would also be using an extension of ERC721 known as [ERC721 Enumerable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol)
-  - ERC721 Enumerable is helps you to keep track of all the tokenIds in the contract and also the tokensIds held by an address for a given contract.
-  - Please have a look at the [functions](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721Enumerable) it implements before moving ahead
+  - ERC721 Enumerable helps you to keep track of all the tokenIds in the contract and also the tokensIds held by an address for a given contract.
+  - Kindly have a look at the [functions](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721Enumerable) it implements before moving ahead.
 
-To build the smart contract we would be using [Hardhat](https://hardhat.org/). Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words you can write your smart contract, deploy them, run tests, and debug your code.
+To build the smart contract we would be using [Hardhat](https://hardhat.org/). Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words, you can write your own smart contract, deploy them, run tests and debug your code via a single framework.
 
 - To setup a Hardhat project, Open up a terminal and execute these commands
 
@@ -79,13 +82,13 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
 
   and press `Enter` for all the questions.
 
-- In the same terminal now install `@openzeppelin/contracts` as we would be importing [Openzeppelin's ERC721Enumerable Contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol) in our `CryptoDevs` contract.
+- In the same terminal now install `@openzeppelin/contracts` as we would be using [Openzeppelin's ERC721Enumerable Contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol) in our `CryptoDevs` contract.
 
   ```bash
   npm install @openzeppelin/contracts
   ```
 
-- We will need to call the `Whitelist Contract` that you deployed for your previous level to check for addresses that were whitelisted and give them presale access. As we only need to call `mapping(address => bool) public whitelistedAddresses;` We can create an interface for `Whitelist contract` with a function only for this mapping, this way we would save `gas` as we would not need to inherit and deploy the entire `Whitelist Contract` but only a part of it.
+- We will be needing to call the `Whitelist Contract` that you deployed for your previous level to check for addresses that were whitelisted and give them presale access. As we only need to call `mapping(address => bool) public whitelistedAddresses;` We can create an interface for `Whitelist contract` with a function only for this mapping, this way we would save `gas` as we would not need to inherit and deploy the entire `Whitelist Contract` but only a part of it.
 
 - Create a new file inside the `contracts` directory and call it `IWhitelist.sol`
 
@@ -221,13 +224,16 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
         fallback() external payable {}
     }
   ```
-- Now we would install `dotenv` package to be able to import the env file and use it in our config. Open up a terminal pointing at `hardhat-tutorial` directory and execute this command
+- Now we would install `dotenv` package to be able to import the `.env` file and use it in our config.
+  Open up a terminal pointing at `hardhat-tutorial` directory and execute this command
 
   ```bash
   npm install dotenv
   ```
 
-- Now create a `.env` file in the `hardhat-tutorial` folder and add the following lines, use the instructions in the comments to get your Alchemy API Key URL and RINKEBY Private Key. Make sure that the account from which you get your rinkeby private key is funded with Rinkeby Ether.
+- Now create a `.env` file in the `hardhat-tutorial` folder and add the following lines.
+  use the instructions in the comments to get your Alchemy API Key URL and RINKEBY Private Key.
+  Make sure that the account from which you get your rinkeby private key is funded with Rinkeby Ether.
 
   ```bash
   // Go to https://www.alchemyapi.io, sign up, create
@@ -283,9 +289,14 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
     });
   ```
 
-- As you can read, `deploy.js` requires some constants. Lets create a folder named `constants` under the `hardhat-tutorial` folder
-- Now add an `index.js` file inside the `constants` folder and add the following lines to the file. Replace "address-of-the-whitelist-contract" with the address of the whitelist contract that you deployed in the previous tutorial. For Metadata_URL, just copy the sample one that has been provided. We would replace this further down in the tutorial.
+- As you can read , `deploy.js` requires some constants. Lets create a folder named `constants` under the `hardhat-tutorial` folder
+- Now add an `index.js` file inside the `constants` folder and do two things
 
+    - Replace "address-of-the-whitelist-contract" with the Deployment Address of the whitelist contract from previous tutorial
+    - For Metadata_URL, just copy the sample one that has been provided. We would replace this further down in the tutorial.
+
+      Now add the following lines to the file.
+      
   ```js
   // Address of the Whitelist Contract that you deployed
   const WHITELIST_CONTRACT_ADDRESS = "address-of-the-whitelist-contract";
@@ -295,7 +306,10 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
   module.exports = { WHITELIST_CONTRACT_ADDRESS, METADATA_URL };
   ```
 
-- Now open the hardhat.config.js file, we would add the `rinkeby` network here so that we can deploy our contract to rinkeby. Replace all the lines in the `hardhat.config.js` file with the given below lines
+- Now open the hardhat.config.js file, we would add the `rinkeby` network here 
+  so that we can deploy our contract to rinkeby.
+  
+  Replace all the lines in the `hardhat.config.js` file with the lines given below
 
   ```js
   require("@nomicfoundation/hardhat-toolbox");
@@ -316,17 +330,25 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
   };
   ```
   
-- Compile the contract, open up a terminal pointing at `hardhat-tutorial` directory and execute this command
+- Compiling the contract
+  
+  - open up a terminal pointing in `hardhat-tutorial` directory and execute this command
 
   ```bash
     npx hardhat compile
   ```
   
-- To deploy, open up a terminal pointing at`hardhat-tutorial` directory and execute this command
+- Deployment 
+  
+  - open up a terminal pointing at`hardhat-tutorial` directory and execute this command
+
   ```bash
     npx hardhat run scripts/deploy.js --network rinkeby
   ```
-- Save the Crypto Devs Contract Address that was printed on your terminal in your notepad, you would need it futher down in the tutorial.
+  
+- Copy the Crypto Devs Contract Deployment Address that is printed on your terminal and save in your notepad.
+  
+  You would need it futher down in the tutorial.
 
 ### Website
 
