@@ -43,7 +43,7 @@ If you would rather learn from a video, we have a recording available of this tu
     - renounceOwnership for the owner to relinquish this administrative privilege, a common pattern after an initial stage with centralized administration is over.
 
 - We would also be using an extension of ERC721 known as [ERC721 Enumerable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/extensions/ERC721Enumerable.sol)
-  - ERC721 Enumerable is helps you to keep track of all the tokenIds in the contract and also the tokensIds held by an address for a given contract.
+  - ERC721 Enumerable helps you to keep track of all the tokenIds in the contract and also the tokensIds held by an address for a given contract.
   - Please have a look at the [functions](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721Enumerable) it implements before moving ahead
 
 To build the smart contract we would be using [Hardhat](https://hardhat.org/). Hardhat is an Ethereum development environment and framework designed for full stack development in Solidity. In simple words you can write your smart contract, deploy them, run tests, and debug your code.
