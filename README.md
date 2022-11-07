@@ -429,7 +429,7 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
   }
   ```
 
-- Open you index.js file under the pages folder and paste the following code, explanation of the code can be found in the comments.
+- Open your index.js file under the pages folder and paste the following code. An explanation of the code can be found in the comments.
 
   ```js
   import { Contract, providers, utils } from "ethers";
