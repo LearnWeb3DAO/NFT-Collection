@@ -91,7 +91,7 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
 
   ```go
       // SPDX-License-Identifier: MIT
-      pragma solidity ^0.8.4;
+      pragma solidity ^0.8.9;
 
       interface IWhitelist {
           function whitelistedAddresses(address) external view returns (bool);
@@ -102,7 +102,7 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
 
   ```go
     // SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.4;
+    pragma solidity ^0.8.9;
 
     import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
     import "@openzeppelin/contracts/access/Ownable.sol";
@@ -306,7 +306,7 @@ npm install --save-dev @nomicfoundation/hardhat-toolbox
   const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 
   module.exports = {
-    solidity: "0.8.4",
+    solidity: "0.8.9",
     networks: {
       rinkeby: {
         url: ALCHEMY_API_KEY_URL,
